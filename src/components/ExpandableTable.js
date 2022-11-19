@@ -46,19 +46,20 @@ import { notesDB } from '../utils/db';
 import { UserIdContext } from '../utils/contexts';
 
 function Status({ status }) {
+    const commonProps = { w: 5, h: 5 };
     let icon;
 
     if (status.includes('cannot')) {
-        icon = <WarningIcon color={'red.500'} />;
+        icon = <WarningIcon color={'red.500'} {...commonProps} />;
     } else if (status.includes('can')) {
-        icon = <CheckCircleIcon color={'green.500'} />;
+        icon = <CheckCircleIcon color={'green.500'} {...commonProps} />;
     } else {
-        icon = <QuestionIcon color={'gray.500'} />;
+        icon = <QuestionIcon color={'gray.500'} {...commonProps} />;
     }
 
     return (
         <Box>
-            <Tooltip label={titleCase(status.replace(/_/gi, ' '))}>
+            <Tooltip label={titleCase(status.replace(/_/g, ' '))}>
                 {icon}
             </Tooltip>
         </Box>
@@ -207,7 +208,7 @@ function ExpandableRow({ data, isExpanded, onExpand }) {
                                 {approvalIds.has(reviewer.id) ? (
                                     <AvatarBadge
                                         as={Icon}
-                                        boxSize="1.5em"
+                                        boxSize="1.8em"
                                         bg={'white'}
                                         color={'green.500'}
                                     >

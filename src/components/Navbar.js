@@ -4,11 +4,15 @@ import {
     Button,
     Flex,
     Heading,
+    HStack,
+    Image,
     Stack,
     useColorMode,
     useColorModeValue,
 } from '@chakra-ui/react';
 import { MoonIcon, SettingsIcon, SunIcon } from '@chakra-ui/icons';
+import logoBlack from '../assets/logo-black.png';
+import logoWhite from '../assets/logo-white.png';
 
 function Navbar({ onSettingsClick }) {
     const { colorMode, toggleColorMode } = useColorMode();
@@ -16,9 +20,14 @@ function Navbar({ onSettingsClick }) {
     return (
         <Box bg={useColorModeValue('gray.200', 'gray.900')} px={4} mb={8}>
             <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
-                <Box>
+                <HStack>
+                    <Image
+                        maxH={'4rem'}
+                        src={colorMode === 'light' ? logoBlack : logoWhite}
+                        alt={'Clarity'}
+                    />
                     <Heading size={'md'}>Clarity</Heading>
-                </Box>
+                </HStack>
 
                 <Flex alignItems={'center'}>
                     <Stack direction={'row'}>

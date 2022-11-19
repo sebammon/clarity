@@ -1,6 +1,6 @@
 const PREFIXES = ['Draft', 'Resolve'];
 
-const removeQuotes = (str) => str.replace(/"/gi, '').replace(/'/gi, '');
+const removeQuotes = (str) => str.replace(/"/g, '').replace(/'/g, '');
 
 const removePrefix = (str) => {
     for (let pref of PREFIXES) {
