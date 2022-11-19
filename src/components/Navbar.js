@@ -22,7 +22,7 @@ function Navbar({ onSettingsClick }) {
             <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
                 <HStack>
                     <Image
-                        maxH={'4rem'}
+                        maxH={'3rem'}
                         src={colorMode === 'light' ? logoBlack : logoWhite}
                         alt={'Clarity'}
                     />
