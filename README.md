@@ -19,6 +19,7 @@ Follow the steps below to get started using clarity:
 
 ## TODO
 
+* Generalise API base url
 * Pipeline status and overall status
 * CTRL-Z undo marked read
 * Notifications for changes in MR status (this can be merged now)
