@@ -1,11 +1,10 @@
-import { Tooltip } from '@chakra-ui/react';
-import { Avatar as CAvatar } from '@chakra-ui/avatar';
+import { Avatar as ChakraAvatar, Tooltip } from '@chakra-ui/react';
 import React from 'react';
 
 function Avatar({ children, ...props }) {
     return (
         <Tooltip label={props.name}>
-            <CAvatar {...props}>{children}</CAvatar>
+            <ChakraAvatar {...props}>{children}</ChakraAvatar>
         </Tooltip>
     );
 }
