@@ -29,9 +29,9 @@ function Hero({ onOpen }) {
                     Welcome
                 </Heading>
                 <Text color={'gray.500'}>
-                    Time for some clarity - merge requests will never be the
-                    same again. To get started click on the button below to add
-                    your <Code>Private Token</Code> from GitLab. If you don't
+                    Time for clarity - merge requests will never be the same
+                    again! To get started click on the button below to add your
+                    GitLab domain and <Code>Private Token</Code>. If you don't
                     have a token yet, follow{' '}
                     <Link
                         href={
@@ -42,7 +42,8 @@ function Hero({ onOpen }) {
                         these
                         <ExternalLinkIcon mx="2px" />
                     </Link>{' '}
-                    instructions.
+                    instructions to create one with <Code>read_api</Code>{' '}
+                    permissions.
                 </Text>
                 <Button
                     colorScheme={'teal'}
