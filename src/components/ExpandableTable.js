@@ -18,7 +18,6 @@ import {
     Thead,
     Tooltip,
     Tr,
-    useToast,
     Wrap,
     WrapItem,
 } from '@chakra-ui/react';
@@ -37,7 +36,11 @@ import {
     hexToRgb,
     titleCase,
 } from '../utils/helpers';
-import { getMergeRequestApprovals, getNotes } from '../utils/api';
+import {
+    getMergeRequestApprovals,
+    getMergeRequestDetails,
+    getNotes,
+} from '../utils/api';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import Notes from './Notes';
 import Avatar from './Avatar';
@@ -45,13 +48,13 @@ import ReadIcon from './ReadIcon';
 import { notesDB } from '../utils/db';
 import { UserIdContext } from '../utils/contexts';
 
-function Status({ status }) {
+function Status({ status, label }) {
     const commonProps = { w: 5, h: 5 };
     let icon;
 
-    if (status.includes('cannot')) {
+    if (status === 'failed') {
         icon = <WarningIcon color={'red.500'} {...commonProps} />;
-    } else if (status.includes('can')) {
+    } else if (status === 'success') {
         icon = <CheckCircleIcon color={'green.500'} {...commonProps} />;
     } else {
         icon = <QuestionIcon color={'gray.500'} {...commonProps} />;
@@ -59,10 +62,30 @@ function Status({ status }) {
 
     return (
         <Box>
-            <Tooltip label={titleCase(status.replace(/_/g, ' '))}>
+            <Tooltip label={titleCase((label || '').replace(/_/g, ' '))}>
                 {icon}
             </Tooltip>
         </Box>
+    );
+}
+
+function PipelineStatus({ projectId, mergeRequestId }) {
+    const detailQuery = useQuery(
+        [`detail-${projectId}:${mergeRequestId}`],
+        () => getMergeRequestDetails(projectId, mergeRequestId)
+    );
+
+    const pipeline = detailQuery.data?.head_pipeline;
+
+    if (detailQuery.isLoading) {
+        return <Text>...</Text>;
+    }
+
+    return (
+        <Status
+            status={pipeline?.status}
+            label={pipeline?.detailed_status?.label}
+        />
     );
 }
 
@@ -73,7 +96,6 @@ function ExpandableRow({ data, isExpanded, onExpand }) {
     const labels = mergeRequest.labels;
 
     const userId = useContext(UserIdContext);
-    const toast = useToast({ position: 'top-right' });
 
     const approvalQuery = useQuery(
         [`approvals-${projectId}:${mergeRequestId}`],
@@ -97,25 +119,18 @@ function ExpandableRow({ data, isExpanded, onExpand }) {
     const newNoteIds = notes
         .filter((n) => n.author.id !== userId)
         .map((n) => n.id);
-    const readNoteIds = (readNotesQuery.data || []).map((n) => n.note);
+    const readNoteIds = (readNotesQuery.data || []).map((n) => n.noteId);
 
     const unreadNotes = getUnreadNotes(readNoteIds, newNoteIds);
     const hasUnreadNotes = !!unreadNotes.size;
-
-    // if (hasUnreadNotes) {
-    //     toast({
-    //         title: 'New activity',
-    //         description: `MR ${mergeRequest.iid} has ${unreadNotes.size} unread comments.`,
-    //     });
-    // }
 
     const handleMarkRead = (e) => {
         e.stopPropagation();
 
         const markNotesRead = Array.from(unreadNotes).map((noteId) => ({
-            note: noteId,
-            mergeRequest: mergeRequestId,
-            project: projectId,
+            noteId,
+            mergeRequestId,
+            projectId,
             read: true,
         }));
 
@@ -220,8 +235,13 @@ function ExpandableRow({ data, isExpanded, onExpand }) {
                     </HStack>
                 </Td>
                 <Td>
+                    <PipelineStatus
+                        projectId={projectId}
+                        mergeRequestId={mergeRequestId}
+                    />
+                </Td>
+                <Td>
                     <HStack>
-                        <Status status={mergeRequest.merge_status || ''} />
                         <HStack spacing={1}>
                             <ChatIcon />
                             <Text>{mergeRequest.user_notes_count}</Text>
@@ -264,7 +284,8 @@ function ExpandableTable({ data }) {
                         <Th>Merge request</Th>
                         <Th>Author</Th>
                         <Th>Reviewer</Th>
-                        <Th>Status</Th>
+                        <Th>Pipeline</Th>
+                        <Th>Info</Th>
                     </Tr>
                 </Thead>
                 <Tbody>

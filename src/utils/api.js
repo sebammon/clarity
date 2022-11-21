@@ -40,3 +40,8 @@ export const getMergeRequestApprovals = (projectId, mergeRequestId) =>
             `/projects/${projectId}/merge_requests/${mergeRequestId}/approval_state`
         )
         .then((r) => r.data);
+
+export const getMergeRequestDetails = (projectId, mergeRequestId) =>
+    axios
+        .get(`/projects/${projectId}/merge_requests/${mergeRequestId}`)
+        .then((r) => r.data);

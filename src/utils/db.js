@@ -4,7 +4,7 @@ const db = new Dexie('clarity');
 
 db.version(1).stores({
     config: `name, value`,
-    notes: `note, [project+mergeRequest], read`,
+    notes: `noteId, [projectId+mergeRequestId], read`,
 });
 
 const n = (name, value) => ({ name, value });
@@ -54,8 +54,8 @@ class NotesDB {
         return this.db.bulkPut(arr);
     }
 
-    getNotes(project, mergeRequest) {
-        return this.db.where({ project, mergeRequest }).toArray();
+    getNotes(projectId, mergeRequestId) {
+        return this.db.where({ projectId, mergeRequestId }).toArray();
     }
 }
 
