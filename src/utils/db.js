@@ -2,7 +2,7 @@ import Dexie from 'dexie';
 
 const db = new Dexie('clarity');
 
-db.version(3).stores({
+db.version(1).stores({
     config: `name, value`,
     notes: `note, [project+mergeRequest], read`,
 });
