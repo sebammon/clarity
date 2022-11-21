@@ -53,11 +53,11 @@ function Status({ status, label }) {
     let icon;
 
     if (status === 'failed') {
-        icon = <WarningIcon color={'red.500'} {...commonProps} />;
+        icon = <WarningIcon color={'red.600'} {...commonProps} />;
     } else if (status === 'success') {
-        icon = <CheckCircleIcon color={'green.500'} {...commonProps} />;
+        icon = <CheckCircleIcon color={'green.600'} {...commonProps} />;
     } else {
-        icon = <QuestionIcon color={'gray.500'} {...commonProps} />;
+        icon = <QuestionIcon color={'gray.600'} {...commonProps} />;
     }
 
     return (
@@ -225,7 +225,7 @@ function ExpandableRow({ data, isExpanded, onExpand }) {
                                         as={Icon}
                                         boxSize="1.8em"
                                         bg={'white'}
-                                        color={'green.500'}
+                                        color={'green.600'}
                                     >
                                         <CheckCircleIcon />
                                     </AvatarBadge>
