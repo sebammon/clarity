@@ -39,3 +39,14 @@ export function hexToRgb(hex) {
     }
     return [0, 0, 0];
 }
+
+export const removeTrailingSlash = (str) => {
+    if (str.endsWith('/')) {
+        return str.slice(0, str.length - 1);
+    }
+
+    return str;
+};
+
+export const getBaseUrl = (domain) =>
+    `https://${removeTrailingSlash(domain)}/api/v4/`;

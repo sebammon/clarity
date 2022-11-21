@@ -7,19 +7,31 @@ db.version(3).stores({
     notes: `note, [project+mergeRequest], read`,
 });
 
+const n = (name, value) => ({ name, value });
+
 class ConfigDB {
     constructor() {
         this.db = db.config;
     }
 
-    upsertToken(token) {
-        return this.db.put({ name: 'privateToken', value: token });
+    upsertSettings({ token, domain }) {
+        const settings = [n('token', token), n('domain', domain)].filter(
+            ({ value }) => !!value
+        );
+
+        return Promise.all(settings.map((setting) => this.db.put(setting)));
     }
 
-    async getToken() {
-        const token = await this.db.get({ name: 'privateToken' });
+    async getSettings() {
+        const settings = await this.db
+            .where('name')
+            .notEqual('userId')
+            .toArray();
 
-        return token?.value;
+        return settings.reduce(
+            (obj, curr) => ({ ...obj, [curr.name]: curr.value }),
+            {}
+        );
     }
 
     upsertUserId(id) {

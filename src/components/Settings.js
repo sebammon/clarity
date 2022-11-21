@@ -13,25 +13,28 @@ import {
     ModalFooter,
     ModalHeader,
     ModalOverlay,
+    VStack,
 } from '@chakra-ui/react';
 import { configDB } from '../utils/db';
 
 function Settings({ isOpen, onClose, onSave }) {
     const [show, setShow] = useState(false);
     const [tokenValue, setTokenValue] = useState('');
+    const [domainValue, setDomainValue] = useState('');
 
     const handleSave = () => {
-        if (tokenValue) {
-            onSave && onSave(tokenValue);
+        if (tokenValue && domainValue) {
+            onSave && onSave({ token: tokenValue, domain: domainValue });
         } else {
-            alert('Private token is required');
+            alert('Fill-in the required fields.');
         }
     };
 
     useEffect(() => {
         if (isOpen) {
-            configDB.getToken().then((v) => {
-                setTokenValue(v || '');
+            configDB.getSettings().then(({ token, domain }) => {
+                setDomainValue(domain || '');
+                setTokenValue(token || '');
             });
         }
     }, [isOpen]);
@@ -43,27 +46,46 @@ function Settings({ isOpen, onClose, onSave }) {
                 <ModalHeader>Settings</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
-                    <FormControl>
-                        <FormLabel>Private Token</FormLabel>
-                        <InputGroup size="md">
-                            <Input
-                                pr="4.5rem"
-                                value={tokenValue}
-                                onChange={(e) => setTokenValue(e.target.value)}
-                                type={show ? 'text' : 'password'}
-                                placeholder="Token"
-                            />
-                            <InputRightElement width="4.5rem">
-                                <Button
-                                    h="1.75rem"
-                                    size="sm"
-                                    onClick={() => setShow((prev) => !prev)}
-                                >
-                                    {show ? 'Hide' : 'Show'}
-                                </Button>
-                            </InputRightElement>
-                        </InputGroup>
-                    </FormControl>
+                    <form autoComplete={'off'}>
+                        <VStack spacing={3}>
+                            <FormControl isRequired={true}>
+                                <FormLabel>Domain</FormLabel>
+                                <Input
+                                    value={domainValue}
+                                    onChange={(e) =>
+                                        setDomainValue(e.target.value)
+                                    }
+                                    type={'text'}
+                                    placeholder="gitlab.example.com"
+                                />
+                            </FormControl>
+                            <FormControl isRequired={true}>
+                                <FormLabel>Private Token</FormLabel>
+                                <InputGroup size="md">
+                                    <Input
+                                        pr="4.5rem"
+                                        value={tokenValue}
+                                        onChange={(e) =>
+                                            setTokenValue(e.target.value)
+                                        }
+                                        type={show ? 'text' : 'password'}
+                                        placeholder="Token"
+                                    />
+                                    <InputRightElement width="4.5rem">
+                                        <Button
+                                            h="1.75rem"
+                                            size="sm"
+                                            onClick={() =>
+                                                setShow((prev) => !prev)
+                                            }
+                                        >
+                                            {show ? 'Hide' : 'Show'}
+                                        </Button>
+                                    </InputRightElement>
+                                </InputGroup>
+                            </FormControl>
+                        </VStack>
+                    </form>
                 </ModalBody>
 
                 <ModalFooter>

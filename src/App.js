@@ -15,6 +15,15 @@ import { getUser } from './utils/api';
 import axios from 'axios';
 import Main from './components/Main';
 import { UserIdContext } from './utils/contexts';
+import { getBaseUrl } from './utils/helpers';
+
+const verifySettings = ({ token, domain }) =>
+    getUser(domain, token)
+        .then(() => ({ valid: true }))
+        .catch((err) => ({
+            valid: false,
+            message: err?.response?.data?.message,
+        }));
 
 function App() {
     const [ready, setReady] = useState(null);
@@ -25,10 +34,10 @@ function App() {
     const queryClient = useQueryClient();
 
     const handleError = useCallback(
-        (e) => {
+        (message) => {
             toast({
-                title: 'Token error',
-                description: `Invalid token: ${e?.response?.data?.message}`,
+                title: 'Invalid settings',
+                description: message || undefined,
                 status: 'error',
             });
         },
@@ -37,48 +46,46 @@ function App() {
 
     useEffect(() => {
         const init = async () => {
-            const token = await configDB.getToken();
+            const settings = await configDB.getSettings();
 
-            try {
-                if (token) {
-                    await handleReady(token);
+            if (settings.token && settings.domain) {
+                const { valid, message } = await verifySettings(settings);
+
+                if (valid) {
+                    await handleReady(settings);
                     setReady(true);
                     return;
                 }
-            } catch (e) {
-                handleError(e);
-            }
 
-            setReady(false);
+                handleError(message || undefined);
+                setReady(false);
+            } else {
+                setReady(false);
+            }
         };
 
         init();
     }, [handleError]);
 
-    const handleReady = async (token) => {
-        axios.defaults.headers['Private-Token'] = token;
+    const handleReady = async (settings) => {
+        axios.defaults.baseURL = getBaseUrl(settings.domain);
+        axios.defaults.headers['Private-Token'] = settings.token;
         const { id } = await getUser();
         await configDB.upsertUserId(id);
         setUserId(id);
     };
 
-    const handleSave = async (token) => {
-        let prevToken = await configDB.getToken();
+    const handleSave = async (settings) => {
+        const { valid, message } = await verifySettings(settings);
 
-        try {
-            await configDB.upsertToken(token);
-            await handleReady(token);
+        if (valid) {
+            await configDB.upsertSettings(settings);
+            await handleReady(settings);
             await queryClient.invalidateQueries();
             setReady(true);
             onClose();
-        } catch (e) {
-            if (prevToken) {
-                // Roll back
-                await configDB.upsertToken(prevToken);
-                await handleReady(prevToken);
-                await queryClient.invalidateQueries();
-            }
-            handleError(e);
+        } else {
+            handleError(message || undefined);
         }
     };
 
