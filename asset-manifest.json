@@ -1,14 +1,14 @@
 {
   "files": {
-    "main.js": "/clarity/static/js/main.a5c02996.js",
+    "main.js": "/clarity/static/js/main.a47a05cc.js",
     "static/js/787.342515ab.chunk.js": "/clarity/static/js/787.342515ab.chunk.js",
     "static/media/logo-black.png": "/clarity/static/media/logo-black.1c45f6a2e5dee32f1a19.png",
     "static/media/logo-white.png": "/clarity/static/media/logo-white.a3f9008f65ccb181f330.png",
     "index.html": "/clarity/index.html",
-    "main.a5c02996.js.map": "/clarity/static/js/main.a5c02996.js.map",
+    "main.a47a05cc.js.map": "/clarity/static/js/main.a47a05cc.js.map",
     "787.342515ab.chunk.js.map": "/clarity/static/js/787.342515ab.chunk.js.map"
   },
   "entrypoints": [
-    "static/js/main.a5c02996.js"
+    "static/js/main.a47a05cc.js"
   ]
 }
