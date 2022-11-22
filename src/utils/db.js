@@ -1,5 +1,16 @@
 import Dexie from 'dexie';
 
+// TODO: Super hacky! Reset the database in the worst case
+window.addEventListener('unhandledrejection', (e) => {
+    const message = e?.reason?.message || '';
+
+    // Messed up something with the versions, let's reset everything
+    if (message.includes('VersionError')) {
+        db.delete();
+        window.location.reload();
+    }
+});
+
 const db = new Dexie('clarity');
 
 db.version(1).stores({
