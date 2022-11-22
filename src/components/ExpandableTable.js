@@ -250,7 +250,7 @@ function ExpandableRow({ data, isExpanded, onExpand }) {
                 </Td>
             </Tr>
             <Tr whiteSpace={'normal'}>
-                <Td colSpan={4} py={0}>
+                <Td colSpan={5} py={0}>
                     <Collapse
                         in={isExpanded}
                         unmountOnExit={true}
