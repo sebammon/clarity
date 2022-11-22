@@ -63,6 +63,7 @@ function Settings({ isOpen, onClose, onSave }) {
                                 <FormLabel>Private Token</FormLabel>
                                 <InputGroup size="md">
                                     <Input
+                                        autoComplete={'new-password'}
                                         pr="4.5rem"
                                         value={tokenValue}
                                         onChange={(e) =>
