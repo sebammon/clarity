@@ -43,11 +43,7 @@ function Status({ status, label }) {
         icon = <QuestionIcon color={'gray.600'} {...commonProps} />;
     }
 
-    return (
-        <Box>
-            <Tooltip label={titleCase((label || '').replace(/_/g, ' '))}>{icon}</Tooltip>
-        </Box>
-    );
+    return <Tooltip label={titleCase((label || '').replace(/_/g, ' '))}>{icon}</Tooltip>;
 }
 
 function PipelineStatus({ projectId, mergeRequestId }) {
@@ -61,7 +57,11 @@ function PipelineStatus({ projectId, mergeRequestId }) {
         return <Text>...</Text>;
     }
 
-    return <Status status={pipeline?.status} label={pipeline?.detailed_status?.label} />;
+    return (
+        <Link isExternal={true} href={pipeline?.web_url}>
+            <Status status={pipeline?.status} label={pipeline?.detailed_status?.label} />
+        </Link>
+    );
 }
 
 function ExpandableRow({ data, isExpanded, onExpand }) {
