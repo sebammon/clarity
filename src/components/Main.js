@@ -1,27 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { getAssignedMergeRequests, getAuthoredMergeRequests, getReviewingMergeRequests } from '../utils/api';
-import {
-    Container,
-    Heading,
-    Skeleton,
-    Tab,
-    TabList,
-    TabPanel,
-    TabPanels,
-    Tabs,
-    useColorModeValue,
-} from '@chakra-ui/react';
+import { Container, Skeleton, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react';
 import React from 'react';
 import ExpandableTable from './ExpandableTable';
 import { useLocalStorage } from '../utils/hooks';
-
-function Subheading({ children, ...props }) {
-    return (
-        <Heading fontWeight={'normal'} color={useColorModeValue('gray.600', 'gray.400')} size={'lg'} mb={3} {...props}>
-            {children}
-        </Heading>
-    );
-}
 
 function Main() {
     const [_tabIndex, setTabIndex] = useLocalStorage('tabIndex', 0);
