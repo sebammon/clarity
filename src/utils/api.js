@@ -14,34 +14,26 @@ export const getReviewingMergeRequests = async () => {
     const userId = await configDB.getUserId();
 
     return axios
-        .get(
-            `/merge_requests?state=opened&scope=all&reviewer_id=${userId}&with_labels_details=true`
-        )
+        .get(`/merge_requests?state=opened&scope=all&reviewer_id=${userId}&with_labels_details=true`)
+        .then((r) => r.data);
+};
+
+export const getAuthoredMergeRequests = async () => {
+    const userId = await configDB.getUserId();
+
+    return axios
+        .get(`/merge_requests?state=opened&scope=all&author_id=${userId}&with_labels_details=true`)
         .then((r) => r.data);
 };
 
 export const getAssignedMergeRequests = () =>
-    axios
-        .get(
-            `/merge_requests?state=opened&scope=assigned_to_me&with_labels_details=true`
-        )
-        .then((r) => r.data);
+    axios.get(`/merge_requests?state=opened&scope=assigned_to_me&with_labels_details=true`).then((r) => r.data);
 
 export const getNotes = (projectId, mergeRequestId) =>
-    axios
-        .get(
-            `/projects/${projectId}/merge_requests/${mergeRequestId}/notes?sort=desc`
-        )
-        .then((r) => r.data);
+    axios.get(`/projects/${projectId}/merge_requests/${mergeRequestId}/notes?sort=desc`).then((r) => r.data);
 
 export const getMergeRequestApprovals = (projectId, mergeRequestId) =>
-    axios
-        .get(
-            `/projects/${projectId}/merge_requests/${mergeRequestId}/approval_state`
-        )
-        .then((r) => r.data);
+    axios.get(`/projects/${projectId}/merge_requests/${mergeRequestId}/approval_state`).then((r) => r.data);
 
 export const getMergeRequestDetails = (projectId, mergeRequestId) =>
-    axios
-        .get(`/projects/${projectId}/merge_requests/${mergeRequestId}`)
-        .then((r) => r.data);
+    axios.get(`/projects/${projectId}/merge_requests/${mergeRequestId}`).then((r) => r.data);
