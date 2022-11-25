@@ -1,12 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import Navbar from './components/Navbar';
-import {
-    Center,
-    Spinner,
-    useDisclosure,
-    useToast,
-    VStack,
-} from '@chakra-ui/react';
+import { Center, Spinner, useDisclosure, useToast, VStack } from '@chakra-ui/react';
 import Settings from './components/Settings';
 import Hero from './components/Hero';
 import { configDB } from './utils/db';
@@ -93,13 +87,7 @@ function App() {
         return (
             <Center>
                 <VStack h={'100vh'} justifyContent={'space-evenly'}>
-                    <Spinner
-                        thickness="4px"
-                        speed="0.65s"
-                        emptyColor="gray.200"
-                        color="blue.500"
-                        size="xl"
-                    />
+                    <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="blue.500" size="xl" />
                 </VStack>
             </Center>
         );
@@ -109,11 +97,7 @@ function App() {
         <React.Fragment>
             <UserIdContext.Provider value={userId}>
                 <Navbar onSettingsClick={onOpen} />
-                <Settings
-                    isOpen={isOpen}
-                    onClose={onClose}
-                    onSave={handleSave}
-                />
+                <Settings isOpen={isOpen} onClose={onClose} onSave={handleSave} />
                 {!ready ? <Hero onOpen={onOpen} /> : <Main />}
             </UserIdContext.Provider>
         </React.Fragment>

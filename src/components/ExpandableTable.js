@@ -21,26 +21,9 @@ import {
     Wrap,
     WrapItem,
 } from '@chakra-ui/react';
-import {
-    ChatIcon,
-    CheckCircleIcon,
-    ChevronDownIcon,
-    ChevronUpIcon,
-    QuestionIcon,
-    WarningIcon,
-} from '@chakra-ui/icons';
-import {
-    cleanString,
-    getApprovals,
-    getUnreadNotes,
-    hexToRgb,
-    titleCase,
-} from '../utils/helpers';
-import {
-    getMergeRequestApprovals,
-    getMergeRequestDetails,
-    getNotes,
-} from '../utils/api';
+import { ChatIcon, CheckCircleIcon, ChevronDownIcon, ChevronUpIcon, QuestionIcon, WarningIcon } from '@chakra-ui/icons';
+import { cleanString, getApprovals, getUnreadNotes, hexToRgb, titleCase } from '../utils/helpers';
+import { getMergeRequestApprovals, getMergeRequestDetails, getNotes } from '../utils/api';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import Notes from './Notes';
 import Avatar from './Avatar';
@@ -62,17 +45,14 @@ function Status({ status, label }) {
 
     return (
         <Box>
-            <Tooltip label={titleCase((label || '').replace(/_/g, ' '))}>
-                {icon}
-            </Tooltip>
+            <Tooltip label={titleCase((label || '').replace(/_/g, ' '))}>{icon}</Tooltip>
         </Box>
     );
 }
 
 function PipelineStatus({ projectId, mergeRequestId }) {
-    const detailQuery = useQuery(
-        [`detail-${projectId}:${mergeRequestId}`],
-        () => getMergeRequestDetails(projectId, mergeRequestId)
+    const detailQuery = useQuery([`detail-${projectId}:${mergeRequestId}`], () =>
+        getMergeRequestDetails(projectId, mergeRequestId)
     );
 
     const pipeline = detailQuery.data?.head_pipeline;
@@ -81,12 +61,7 @@ function PipelineStatus({ projectId, mergeRequestId }) {
         return <Text>...</Text>;
     }
 
-    return (
-        <Status
-            status={pipeline?.status}
-            label={pipeline?.detailed_status?.label}
-        />
-    );
+    return <Status status={pipeline?.status} label={pipeline?.detailed_status?.label} />;
 }
 
 function ExpandableRow({ data, isExpanded, onExpand }) {
@@ -97,16 +72,12 @@ function ExpandableRow({ data, isExpanded, onExpand }) {
 
     const userId = useContext(UserIdContext);
 
-    const approvalQuery = useQuery(
-        [`approvals-${projectId}:${mergeRequestId}`],
-        () => getMergeRequestApprovals(projectId, mergeRequestId)
+    const approvalQuery = useQuery([`approvals-${projectId}:${mergeRequestId}`], () =>
+        getMergeRequestApprovals(projectId, mergeRequestId)
     );
-    const notesQuery = useQuery([`notes-${projectId}:${mergeRequestId}`], () =>
-        getNotes(projectId, mergeRequestId)
-    );
-    const readNotesQuery = useQuery(
-        [`notes-read-${projectId}:${mergeRequestId}`],
-        () => notesDB.getNotes(projectId, mergeRequestId)
+    const notesQuery = useQuery([`notes-${projectId}:${mergeRequestId}`], () => getNotes(projectId, mergeRequestId));
+    const readNotesQuery = useQuery([`notes-read-${projectId}:${mergeRequestId}`], () =>
+        notesDB.getNotes(projectId, mergeRequestId)
     );
     const readNotesMutation = useMutation({
         mutationFn: (data) => notesDB.bulkUpsert(data),
@@ -116,9 +87,7 @@ function ExpandableRow({ data, isExpanded, onExpand }) {
     const approvals = getApprovals(approvalQuery.data?.rules || []);
     const notes = (notesQuery.data || []).filter((note) => !note.system);
     const approvalIds = new Set(approvals.map((approver) => approver.id));
-    const newNoteIds = notes
-        .filter((n) => n.author.id !== userId)
-        .map((n) => n.id);
+    const newNoteIds = notes.filter((n) => n.author.id !== userId).map((n) => n.id);
     const readNoteIds = (readNotesQuery.data || []).map((n) => n.noteId);
 
     const unreadNotes = getUnreadNotes(readNoteIds, newNoteIds);
@@ -153,13 +122,7 @@ function ExpandableRow({ data, isExpanded, onExpand }) {
                             <IconButton
                                 variant={'ghost'}
                                 aria-label="Expand row"
-                                icon={
-                                    isExpanded ? (
-                                        <ChevronUpIcon />
-                                    ) : (
-                                        <ChevronDownIcon />
-                                    )
-                                }
+                                icon={isExpanded ? <ChevronUpIcon /> : <ChevronDownIcon />}
                             />
                             {hasUnreadNotes && (
                                 <IconButton
@@ -184,8 +147,7 @@ function ExpandableRow({ data, isExpanded, onExpand }) {
                                 </Text>
                             )}
                             <Text as={'span'}>
-                                {cleanString(mergeRequest.title)} (
-                                {mergeRequestId})
+                                {cleanString(mergeRequest.title)} ({mergeRequestId})
                             </Text>
                         </Link>
                         <Wrap spacing={1}>
@@ -215,18 +177,9 @@ function ExpandableRow({ data, isExpanded, onExpand }) {
                 <Td>
                     <HStack spacing={1}>
                         {(mergeRequest.reviewers || []).map((reviewer) => (
-                            <Avatar
-                                key={reviewer.id}
-                                name={reviewer.name}
-                                size={'xs'}
-                            >
+                            <Avatar key={reviewer.id} name={reviewer.name} size={'xs'}>
                                 {approvalIds.has(reviewer.id) ? (
-                                    <AvatarBadge
-                                        as={Icon}
-                                        boxSize="1.8em"
-                                        bg={'white'}
-                                        color={'green.600'}
-                                    >
+                                    <AvatarBadge as={Icon} boxSize="1.8em" bg={'white'} color={'green.600'}>
                                         <CheckCircleIcon />
                                     </AvatarBadge>
                                 ) : null}
@@ -235,10 +188,7 @@ function ExpandableRow({ data, isExpanded, onExpand }) {
                     </HStack>
                 </Td>
                 <Td>
-                    <PipelineStatus
-                        projectId={projectId}
-                        mergeRequestId={mergeRequestId}
-                    />
+                    <PipelineStatus projectId={projectId} mergeRequestId={mergeRequestId} />
                 </Td>
                 <Td>
                     <HStack>
@@ -251,19 +201,12 @@ function ExpandableRow({ data, isExpanded, onExpand }) {
             </Tr>
             <Tr whiteSpace={'normal'}>
                 <Td colSpan={5} py={0}>
-                    <Collapse
-                        in={isExpanded}
-                        unmountOnExit={true}
-                        animateOpacity={false}
-                    >
+                    <Collapse in={isExpanded} unmountOnExit={true} animateOpacity={false}>
                         <Box pb={4} px={7}>
                             {notesQuery.isLoading ? (
                                 <p>Loading...</p>
                             ) : (
-                                <Notes
-                                    notes={notes}
-                                    unreadNotes={unreadNotes}
-                                />
+                                <Notes notes={notes} unreadNotes={unreadNotes} />
                             )}
                         </Box>
                     </Collapse>
@@ -295,11 +238,7 @@ function ExpandableTable({ data }) {
                             data={mergeRequest}
                             isExpanded={expand === mergeRequest.iid}
                             onExpand={() =>
-                                setExpand((prev) =>
-                                    prev === mergeRequest.iid
-                                        ? undefined
-                                        : mergeRequest.iid
-                                )
+                                setExpand((prev) => (prev === mergeRequest.iid ? undefined : mergeRequest.iid))
                             }
                         />
                     ))}

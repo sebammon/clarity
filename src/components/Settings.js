@@ -52,9 +52,7 @@ function Settings({ isOpen, onClose, onSave }) {
                                 <FormLabel>Domain</FormLabel>
                                 <Input
                                     value={domainValue}
-                                    onChange={(e) =>
-                                        setDomainValue(e.target.value)
-                                    }
+                                    onChange={(e) => setDomainValue(e.target.value)}
                                     type={'text'}
                                     placeholder="gitlab.example.com"
                                 />
@@ -66,20 +64,12 @@ function Settings({ isOpen, onClose, onSave }) {
                                         autoComplete={'new-password'}
                                         pr="4.5rem"
                                         value={tokenValue}
-                                        onChange={(e) =>
-                                            setTokenValue(e.target.value)
-                                        }
+                                        onChange={(e) => setTokenValue(e.target.value)}
                                         type={show ? 'text' : 'password'}
                                         placeholder="Token"
                                     />
                                     <InputRightElement width="4.5rem">
-                                        <Button
-                                            h="1.75rem"
-                                            size="sm"
-                                            onClick={() =>
-                                                setShow((prev) => !prev)
-                                            }
-                                        >
+                                        <Button h="1.75rem" size="sm" onClick={() => setShow((prev) => !prev)}>
                                             {show ? 'Hide' : 'Show'}
                                         </Button>
                                     </InputRightElement>

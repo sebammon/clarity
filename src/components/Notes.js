@@ -1,10 +1,4 @@
-import {
-    HStack,
-    List,
-    ListItem,
-    Text,
-    useColorModeValue,
-} from '@chakra-ui/react';
+import { HStack, List, ListItem, Text, useColorModeValue } from '@chakra-ui/react';
 import removeMd from 'remove-markdown';
 import React from 'react';
 import Avatar from './Avatar';
@@ -23,13 +17,7 @@ function Notes({ unreadNotes, ...props }) {
                 <ListItem key={note.id}>
                     <HStack spacing={2}>
                         <Avatar name={note.author.name} size={'xs'} />
-                        <Text
-                            fontWeight={
-                                unreadNotes.has(note.id) ? 'bold' : undefined
-                            }
-                            color={color}
-                            noOfLines={1}
-                        >
+                        <Text fontWeight={unreadNotes.has(note.id) ? 'bold' : undefined} color={color} noOfLines={1}>
                             {removeMd(note.body)}
                         </Text>
                     </HStack>

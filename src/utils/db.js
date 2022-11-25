@@ -26,23 +26,15 @@ class ConfigDB {
     }
 
     upsertSettings({ token, domain }) {
-        const settings = [n('token', token), n('domain', domain)].filter(
-            ({ value }) => !!value
-        );
+        const settings = [n('token', token), n('domain', domain)].filter(({ value }) => !!value);
 
         return Promise.all(settings.map((setting) => this.db.put(setting)));
     }
 
     async getSettings() {
-        const settings = await this.db
-            .where('name')
-            .notEqual('userId')
-            .toArray();
+        const settings = await this.db.where('name').notEqual('userId').toArray();
 
-        return settings.reduce(
-            (obj, curr) => ({ ...obj, [curr.name]: curr.value }),
-            {}
-        );
+        return settings.reduce((obj, curr) => ({ ...obj, [curr.name]: curr.value }), {});
     }
 
     upsertUserId(id) {

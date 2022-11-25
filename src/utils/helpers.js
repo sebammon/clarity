@@ -14,8 +14,7 @@ const removePrefix = (str) => {
 
 export const cleanString = (str) => removeQuotes(removePrefix(str));
 
-export const getApprovals = (rules) =>
-    rules.reduce((acc, rule) => acc.concat(rule.approved_by), []);
+export const getApprovals = (rules) => rules.reduce((acc, rule) => acc.concat(rule.approved_by), []);
 
 export const getUnreadNotes = (readNoteIds, newNoteIds) => {
     const _readNotes = new Set(readNoteIds);
@@ -48,5 +47,4 @@ export const removeTrailingSlash = (str) => {
     return str;
 };
 
-export const getBaseUrl = (domain) =>
-    `https://${removeTrailingSlash(domain)}/api/v4/`;
+export const getBaseUrl = (domain) => `https://${removeTrailingSlash(domain)}/api/v4/`;
