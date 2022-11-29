@@ -46,11 +46,12 @@ function Settings({ isOpen, onClose, onSave }) {
                 <ModalHeader>Settings</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
-                    <form autoComplete={'off'}>
+                    <form>
                         <VStack spacing={3}>
                             <FormControl isRequired={true}>
                                 <FormLabel>Domain</FormLabel>
                                 <Input
+                                    autoComplete={'off'}
                                     value={domainValue}
                                     onChange={(e) => setDomainValue(e.target.value)}
                                     type={'text'}
@@ -61,7 +62,7 @@ function Settings({ isOpen, onClose, onSave }) {
                                 <FormLabel>Private Token</FormLabel>
                                 <InputGroup size="md">
                                     <Input
-                                        autoComplete={'new-password'}
+                                        autoComplete={'off'}
                                         pr="4.5rem"
                                         value={tokenValue}
                                         onChange={(e) => setTokenValue(e.target.value)}
