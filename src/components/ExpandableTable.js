@@ -21,7 +21,15 @@ import {
     Wrap,
     WrapItem,
 } from '@chakra-ui/react';
-import { ChatIcon, CheckCircleIcon, ChevronDownIcon, ChevronUpIcon, QuestionIcon, WarningIcon } from '@chakra-ui/icons';
+import {
+    ChatIcon,
+    CheckCircleIcon,
+    ChevronDownIcon,
+    ChevronUpIcon,
+    QuestionIcon,
+    WarningIcon,
+    WarningTwoIcon,
+} from '@chakra-ui/icons';
 import { cleanString, getApprovals, getUnreadNotes, hexToRgb, titleCase } from '../utils/helpers';
 import { getMergeRequestApprovals, getMergeRequestDetails, getNotes } from '../utils/api';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -30,6 +38,8 @@ import Avatar from './Avatar';
 import ReadIcon from './ReadIcon';
 import { notesDB } from '../utils/db';
 import { UserIdContext } from '../utils/contexts';
+
+const COL_SPAN = 6;
 
 function Status({ status, label }) {
     const commonProps = { w: 5, h: 5 };
@@ -89,6 +99,8 @@ function ExpandableRow({ data, isExpanded, onExpand }) {
     const approvalIds = new Set(approvals.map((approver) => approver.id));
     const newNoteIds = notes.filter((n) => n.author.id !== userId).map((n) => n.id);
     const readNoteIds = (readNotesQuery.data || []).map((n) => n.noteId);
+
+    const hasConflicts = mergeRequest.has_conflicts;
 
     const unreadNotes = getUnreadNotes(readNoteIds, newNoteIds);
     const hasUnreadNotes = !!unreadNotes.size;
@@ -191,16 +203,21 @@ function ExpandableRow({ data, isExpanded, onExpand }) {
                     <PipelineStatus projectId={projectId} mergeRequestId={mergeRequestId} />
                 </Td>
                 <Td>
-                    <HStack>
-                        <HStack spacing={1}>
-                            <ChatIcon />
-                            <Text>{mergeRequest.user_notes_count}</Text>
-                        </HStack>
+                    {hasConflicts && (
+                        <Tooltip label={'Merge Conflicts'}>
+                            <WarningTwoIcon w={5} h={5} />
+                        </Tooltip>
+                    )}
+                </Td>
+                <Td>
+                    <HStack spacing={1}>
+                        <ChatIcon />
+                        <Text>{mergeRequest.user_notes_count}</Text>
                     </HStack>
                 </Td>
             </Tr>
             <Tr whiteSpace={'normal'}>
-                <Td colSpan={5} py={0}>
+                <Td colSpan={COL_SPAN} py={0}>
                     <Collapse in={isExpanded} unmountOnExit={true} animateOpacity={false}>
                         <Box pb={4} px={7}>
                             {notesQuery.isLoading ? (
@@ -228,6 +245,7 @@ function ExpandableTable({ data }) {
                         <Th>Author</Th>
                         <Th>Reviewer</Th>
                         <Th>Pipeline</Th>
+                        <Th>Status</Th>
                         <Th>Info</Th>
                     </Tr>
                 </Thead>
