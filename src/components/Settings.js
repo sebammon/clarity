@@ -51,6 +51,7 @@ function Settings({ isOpen, onClose, onSave }) {
                             <FormControl isRequired={true}>
                                 <FormLabel>Domain</FormLabel>
                                 <Input
+                                    name={'domainValue'}
                                     autoComplete={'off'}
                                     value={domainValue}
                                     onChange={(e) => setDomainValue(e.target.value)}
@@ -62,6 +63,7 @@ function Settings({ isOpen, onClose, onSave }) {
                                 <FormLabel>Private Token</FormLabel>
                                 <InputGroup size="md">
                                     <Input
+                                        name={'token'}
                                         autoComplete={'off'}
                                         pr="4.5rem"
                                         value={tokenValue}
