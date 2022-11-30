@@ -26,8 +26,8 @@ function Main() {
                 defaultIndex={tabIndex}
             >
                 <TabList>
-                    <Tab>Author</Tab>
-                    <Tab>Review</Tab>
+                    <Tab>Authored</Tab>
+                    <Tab>Reviewing</Tab>
                     <Tab>Assigned</Tab>
                 </TabList>
 
