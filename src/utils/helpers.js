@@ -22,7 +22,13 @@ export const getUnreadNotes = (readNoteIds, newNoteIds) => {
     return new Set(newNoteIds.filter((id) => !_readNotes.has(id)));
 };
 
-export const firstUpper = (str) => str[0].toUpperCase() + str.slice(1);
+export const firstUpper = (str) => {
+    if (str && str.length) {
+        return str[0].toUpperCase() + str.slice(1);
+    }
+
+    return '';
+};
 
 export const titleCase = (str) => str.split(' ').map(firstUpper).join(' ');
 
