@@ -53,4 +53,4 @@ export const removeTrailingSlash = (str) => {
     return str;
 };
 
-export const getBaseUrl = (domain) => `https://${removeTrailingSlash(domain)}/api/v4/`;
+export const getBaseUrl = (domain) => `https://${removeTrailingSlash(domain)}/api/v4`;
