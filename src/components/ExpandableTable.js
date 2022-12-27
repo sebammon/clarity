@@ -155,7 +155,7 @@ function ExpandableRow({ data, isExpanded, onExpand }) {
                         >
                             {mergeRequest.draft && (
                                 <Text color={'gray.500'} as={'span'}>
-                                    Draft:
+                                    Draft:&nbsp;
                                 </Text>
                             )}
                             <Text as={'span'}>

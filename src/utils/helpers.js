@@ -1,18 +1,10 @@
-const PREFIXES = ['Draft', 'Resolve'];
+import { chain, startCase, toLower } from 'lodash';
 
 const removeQuotes = (str) => str.replace(/"/g, '').replace(/'/g, '');
 
-const removePrefix = (str) => {
-    for (let pref of PREFIXES) {
-        if (str.startsWith(pref)) {
-            return str.slice(pref.length + 1);
-        }
-    }
+const removePrefix = (str) => str.replace('Draft:', '').replace('Resolve', '').trim();
 
-    return str;
-};
-
-export const cleanString = (str) => removeQuotes(removePrefix(str));
+export const cleanString = (str) => chain(str).thru(removeQuotes).thru(removePrefix).value();
 
 export const getApprovals = (rules) => rules.reduce((acc, rule) => acc.concat(rule.approved_by), []);
 
@@ -22,15 +14,7 @@ export const getUnreadNotes = (readNoteIds, newNoteIds) => {
     return new Set(newNoteIds.filter((id) => !_readNotes.has(id)));
 };
 
-export const firstUpper = (str) => {
-    if (str && str.length) {
-        return str[0].toUpperCase() + str.slice(1);
-    }
-
-    return '';
-};
-
-export const titleCase = (str) => str.split(' ').map(firstUpper).join(' ');
+export const titleCase = (str) => startCase(toLower(str));
 
 export function hexToRgb(hex) {
     let c;
