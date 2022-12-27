@@ -38,6 +38,7 @@ import Avatar from './Avatar';
 import ReadIcon from './ReadIcon';
 import { notesDB } from '../utils/db';
 import { UserIdContext } from '../utils/contexts';
+import { orderBy } from 'lodash';
 
 const COL_SPAN = 6;
 
@@ -236,6 +237,8 @@ function ExpandableRow({ data, isExpanded, onExpand }) {
 function ExpandableTable({ data }) {
     const [expand, setExpand] = useState();
 
+    const sortedData = orderBy(data, ['draft'], ['asc']);
+
     return (
         <TableContainer>
             <Table variant={'simple'} size={'sm'}>
@@ -250,7 +253,7 @@ function ExpandableTable({ data }) {
                     </Tr>
                 </Thead>
                 <Tbody>
-                    {(data || []).map((mergeRequest) => (
+                    {(sortedData || []).map((mergeRequest) => (
                         <ExpandableRow
                             key={mergeRequest.iid}
                             data={mergeRequest}
