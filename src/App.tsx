@@ -2,41 +2,37 @@ import React, { useCallback, useEffect, useState } from 'react';
 import Navbar from './components/Navbar';
 import { Center, Spinner, useDisclosure, useToast, VStack } from '@chakra-ui/react';
 import Settings from './components/Settings';
-import Hero from './components/Hero';
+import Hero from './pages/Hero';
 import { configDB } from './utils/db';
 import { useQueryClient } from '@tanstack/react-query';
-import { getUser } from './utils/api';
+import { getBaseUrl, getUser } from './utils/api';
 import axios from 'axios';
-import Main from './components/Main';
+import Main from './pages/Main';
 import { UserIdContext } from './utils/contexts';
-import { getBaseUrl } from './utils/helpers';
 
 const verifySettings = ({ token, domain }) =>
     getUser(domain, token)
-        .then(() => ({ valid: true }))
+        .then(() => ({ valid: true, message: null }))
         .catch((err) => ({
             valid: false,
             message: err?.response?.data?.message,
         }));
 
 function App() {
-    const [ready, setReady] = useState(null);
-    const [userId, setUserId] = useState(null);
+    const [ready, setReady] = useState<null | boolean>(null);
+    const [userId, setUserId] = useState<null | number>(null);
     const { isOpen, onOpen, onClose } = useDisclosure();
     const toast = useToast({ position: 'top-right' });
 
     const queryClient = useQueryClient();
 
-    const handleError = useCallback(
-        (message) => {
-            toast({
-                title: 'Invalid settings',
-                description: message || undefined,
-                status: 'error',
-            });
-        },
-        [toast]
-    );
+    const handleError = useCallback((message) => {
+        toast({
+            title: 'Invalid settings',
+            description: message || undefined,
+            status: 'error',
+        });
+    }, []);
 
     useEffect(() => {
         const init = async () => {
@@ -95,10 +91,10 @@ function App() {
 
     return (
         <React.Fragment>
-            <UserIdContext.Provider value={userId}>
+            <UserIdContext.Provider value={userId as number}>
                 <Navbar onSettingsClick={onOpen} />
                 <Settings isOpen={isOpen} onClose={onClose} onSave={handleSave} />
-                {!ready ? <Hero onOpen={onOpen} /> : <Main />}
+                {ready ? <Main /> : <Hero onOpen={onOpen} />}
             </UserIdContext.Provider>
         </React.Fragment>
     );

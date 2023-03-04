@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import {
     AvatarBadge,
     Box,
@@ -8,14 +8,9 @@ import {
     Icon,
     IconButton,
     Link,
-    Table,
-    TableContainer,
     Tag,
-    Tbody,
     Td,
     Text,
-    Th,
-    Thead,
     Tooltip,
     Tr,
     Wrap,
@@ -30,15 +25,14 @@ import {
     WarningIcon,
     WarningTwoIcon,
 } from '@chakra-ui/icons';
-import { cleanString, getApprovals, getUnreadNotes, hexToRgb, titleCase } from '../utils/helpers';
-import { getMergeRequestApprovals, getMergeRequestDetails, getNotes } from '../utils/api';
+import { cleanString, getApprovals, getUnreadNotes, hexToRgb, titleCase } from '../../utils/helpers';
+import { getMergeRequestApprovals, getMergeRequestDetails, getNotes } from '../../utils/api';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import Notes from './Notes';
-import Avatar from './Avatar';
-import ReadIcon from './ReadIcon';
-import { notesDB } from '../utils/db';
-import { UserIdContext } from '../utils/contexts';
-import { orderBy } from 'lodash';
+import Notes from '../Notes';
+import Avatar from '../Avatar';
+import ReadIcon from '../ReadIcon';
+import { notesDB } from '../../utils/db';
+import { UserIdContext } from '../../utils/contexts';
 
 const COL_SPAN = 6;
 
@@ -58,7 +52,7 @@ function Status({ status, label }) {
 }
 
 function PipelineStatus({ projectId, mergeRequestId }) {
-    const detailQuery = useQuery([`detail-${projectId}:${mergeRequestId}`], () =>
+    const detailQuery = useQuery(['detail', projectId, mergeRequestId], () =>
         getMergeRequestDetails(projectId, mergeRequestId)
     );
 
@@ -83,21 +77,22 @@ function ExpandableRow({ data, isExpanded, onExpand }) {
 
     const userId = useContext(UserIdContext);
 
-    const approvalQuery = useQuery([`approvals-${projectId}:${mergeRequestId}`], () =>
+    const approvalQuery = useQuery(['approvals', projectId, mergeRequestId], () =>
         getMergeRequestApprovals(projectId, mergeRequestId)
     );
-    const notesQuery = useQuery([`notes-${projectId}:${mergeRequestId}`], () => getNotes(projectId, mergeRequestId));
-    const readNotesQuery = useQuery([`notes-read-${projectId}:${mergeRequestId}`], () =>
+    const notesQuery = useQuery(['notes', projectId, mergeRequestId], () => getNotes(projectId, mergeRequestId));
+    const readNotesQuery = useQuery(['notes-read', projectId, mergeRequestId], () =>
         notesDB.getNotes(projectId, mergeRequestId)
     );
     const readNotesMutation = useMutation({
-        mutationFn: (data) => notesDB.bulkUpsert(data),
+        mutationFn: (data: any) => notesDB.bulkUpsert(data),
         onSuccess: () => readNotesQuery.refetch(),
     });
 
     const approvals = getApprovals(approvalQuery.data?.rules || []);
-    const notes = (notesQuery.data || []).filter((note) => !note.system);
     const approvalIds = new Set(approvals.map((approver) => approver.id));
+
+    const notes = notesQuery.data || [];
     const newNoteIds = notes.filter((n) => n.author.id !== userId).map((n) => n.id);
     const readNoteIds = (readNotesQuery.data || []).map((n) => n.noteId);
 
@@ -164,23 +159,20 @@ function ExpandableRow({ data, isExpanded, onExpand }) {
                             </Text>
                         </Link>
                         <Wrap spacing={1}>
-                            {labels.map((label) => {
-                                const [r, g, b] = hexToRgb(label.color);
-                                return (
-                                    <WrapItem key={label.id}>
-                                        <Tag
-                                            key={label.id}
-                                            size={'sm'}
-                                            minW={1}
-                                            minH={1}
-                                            variant="solid"
-                                            bgColor={`rgba(${r}, ${g}, ${b}, 0.8)`}
-                                        >
-                                            {label.name}
-                                        </Tag>
-                                    </WrapItem>
-                                );
-                            })}
+                            {labels.map((label) => (
+                                <WrapItem key={label.id}>
+                                    <Tag
+                                        key={label.id}
+                                        size={'sm'}
+                                        minW={1}
+                                        minH={1}
+                                        variant="solid"
+                                        bgColor={`rgba(${hexToRgb(label.color).join(', ')}, 0.8)`}
+                                    >
+                                        {label.name}
+                                    </Tag>
+                                </WrapItem>
+                            ))}
                         </Wrap>
                     </HStack>
                 </Td>
@@ -234,39 +226,4 @@ function ExpandableRow({ data, isExpanded, onExpand }) {
     );
 }
 
-function ExpandableTable({ data }) {
-    const [expand, setExpand] = useState();
-
-    const sortedData = orderBy(data, ['draft'], ['asc']);
-
-    return (
-        <TableContainer>
-            <Table variant={'simple'} size={'sm'}>
-                <Thead>
-                    <Tr>
-                        <Th>Merge request</Th>
-                        <Th>Author</Th>
-                        <Th>Reviewer</Th>
-                        <Th>Pipeline</Th>
-                        <Th>Status</Th>
-                        <Th>Info</Th>
-                    </Tr>
-                </Thead>
-                <Tbody>
-                    {(sortedData || []).map((mergeRequest) => (
-                        <ExpandableRow
-                            key={mergeRequest.iid}
-                            data={mergeRequest}
-                            isExpanded={expand === mergeRequest.iid}
-                            onExpand={() =>
-                                setExpand((prev) => (prev === mergeRequest.iid ? undefined : mergeRequest.iid))
-                            }
-                        />
-                    ))}
-                </Tbody>
-            </Table>
-        </TableContainer>
-    );
-}
-
-export default ExpandableTable;
+export default ExpandableRow;

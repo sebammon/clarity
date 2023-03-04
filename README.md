@@ -3,6 +3,10 @@
 Gain clarity on open merge requests (MR). This app gives you a simple overview of that latest activities on MRs you are
 reviewing or assigned to.
 
+## Demo
+
+Check out the demo at https://sebammon.github.io/clarity/.
+
 ## Usage
 
 Follow the steps below to get started using clarity:
